@@ -1,4 +1,21 @@
 package com.delivery.order.client;
 
-public class DishClient {
+
+import com.delivery.order.common.Result;
+import com.delivery.order.dto.DishDTO;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+/**
+ * 对照 food-service 的 DishController 写：
+ *   @FeignClient 的 name  = 对方 spring.application.name
+ *   方法上的路径和注解     = 对方接口的原样复制
+ * 只写声明，不发请求；真正的 HTTP 调由 Spring 运行时代理完成。
+ */
+
+@FeignClient(name = "food-service")
+public interface DishClient {
+    @GetMapping("/dish/{id}")
+    Result<DishDTO> getDishById(@PathVariable("id") Long id);
 }
