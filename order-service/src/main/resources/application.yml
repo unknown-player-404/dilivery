@@ -17,6 +17,8 @@ spring:
       transport:
         dashboard: 127.0.0.1:8858
         port: 8719
+      demo:
+        flow-qps: 1
 
 mybatis-plus:
   configuration:

@@ -36,7 +36,7 @@ public class SentinelConfig {
      */
     @Bean
     //CommandLineRunner--在项目启动后，自动执行一段初始化代码
-    public CommandLineRunner loadDemoFlowRule(@Value("${sentinel.demo.flow-qps:0}") int qps){
+    public CommandLineRunner loadDemoFlowRule(@Value("${spring.cloud.sentinel.demo.flow-qps:0}") int qps){
         return args -> {
             //默认为0，不限流
             if (qps<=0){

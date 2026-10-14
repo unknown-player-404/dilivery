@@ -24,7 +24,7 @@ public class OrdersController {
      * 在控制台给资源名 createOrder 配限流规则，超出的请求会进入 blockHandler。
      */
     @PostMapping("/create")
-    @SentinelResource
+    @SentinelResource(value = "createOrder",blockHandler = "createOrderBlockHandler")
     public Result<OrderDetailVO> create(@RequestBody OrderCreateDTO dto){
         return Result.success(ordersService.createOrder(dto));
     }
