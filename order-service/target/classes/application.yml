@@ -17,3 +17,20 @@ spring:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+seata:
+  enabled: true   # 开启服务
+  application-id: ${spring.application.name}    # 服务名
+  tx-service-group: delivery-tx-group     #分组名
+
+  registry:
+    # 直接读本地文件，而不是去Nacos注册中心
+    type: file
+    file:
+      name: default
+
+  service:
+    grouplist:
+      default: 127.0.0.1:8091   # Seata服务端地址
+    vgroup-mapping:
+      delivery-tx-group: default  #映射到default集群
