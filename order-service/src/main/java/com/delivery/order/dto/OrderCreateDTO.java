@@ -1,9 +1,7 @@
-package com.delivery.order.DTO;
+package com.delivery.order.dto;
 
 
 import lombok.Data;
-
-import java.math.BigDecimal;
 
 @Data
 public class OrderCreateDTO {

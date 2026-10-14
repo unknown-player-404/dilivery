@@ -1,4 +1,4 @@
-package com.delivery.order.VO;
+package com.delivery.order.vo;
 
 import lombok.Data;
 

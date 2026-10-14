@@ -1,7 +1,7 @@
 package com.delivery.order.controller;
 
-import com.delivery.order.DTO.OrderCreateDTO;
-import com.delivery.order.VO.OrderDetailVO;
+import com.delivery.order.dto.OrderCreateDTO;
+import com.delivery.order.vo.OrderDetailVO;
 import com.delivery.order.common.Result;
 import com.delivery.order.entity.Orders;
 import com.delivery.order.service.OrdersService;

@@ -1,8 +1,11 @@
 package com.delivery.order.service.Impl;
 
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
-import com.delivery.order.DTO.OrderCreateDTO;
-import com.delivery.order.VO.OrderDetailVO;
+import com.delivery.order.client.DishClient;
+import com.delivery.order.common.Result;
+import com.delivery.order.dto.DishDTO;
+import com.delivery.order.dto.OrderCreateDTO;
+import com.delivery.order.vo.OrderDetailVO;
 import com.delivery.order.entity.Orders;
 import com.delivery.order.mapper.OrdersMapper;
 import com.delivery.order.service.OrdersService;
@@ -19,9 +22,11 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
      * 构造注入
      */
     private final OrdersMapper ordersMapper;
+    private final DishClient dishClient;    //注入Feign接口，调用它=调用菜品服务
 
-    public OrdersServiceImpl(OrdersMapper ordersMapper) {
+    public OrdersServiceImpl(OrdersMapper ordersMapper, DishClient dishClient) {
         this.ordersMapper = ordersMapper;
+        this.dishClient = dishClient;
     }
 
     /**
@@ -34,16 +39,20 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
     }
 
     /**
-     * 将order拼接并转化为成VO的方法
+     * 将order和dish拼接并转化为成VO的方法
      */
-    private OrderDetailVO toVO(Orders order) {
+    private OrderDetailVO toVO(Orders order, DishDTO dish) {
         OrderDetailVO vo = new OrderDetailVO();
 
         vo.setId(order.getId());
         vo.setOrderNo(order.getOrderNo());
         vo.setDishId(order.getDishId());
+
         //接入OpenFeign后重做
-        vo.setDishName("(mock:还没接入菜品服务）");
+        //来自food-service的dishName和dishPrice
+        vo.setDishName(dish.getName());
+        vo.setDishPrice(dish.getPrice());
+
         vo.setQuantity(order.getQuantity());
         vo.setTotalPrice(order.getTotalPrice());
         vo.setStatus(order.getStatus());
@@ -65,36 +74,51 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         if (quantity <= 0) {
             throw new RuntimeException("数量必须大于0");
         }
+
+        // 【替换 mock】远程查菜品：Feign 会自动去 Nacos 找 food-service 并发 HTTP GET /dish/{id}
+        //这里不能直接拿出来用，因为得到的result是一个结果Result<DishDTO>，是一个json
+        Result<DishDTO> result = dishClient.getDishById(dto.getDishId());
+        if (result == null || result.getCode() != 200 || result.getData() == null) {
+            throw new RuntimeException("菜品不存在或菜品调用服务失败");
+        }
+        //这个才是真正的dish
+        DishDTO dish = result.getData();
+
         Orders order = new Orders();
         //下面两个参数都是dto本身包含的
         order.setDishId(dto.getDishId());
         order.setQuantity(quantity);
 
         //下列参数都是现场设置
-
         //设置订单号（随机的）--自定义方法
         order.setOrderNo(generateOrderNo());
-        //临时价格：等OpenFeign接入后换成真实价格
-        order.setTotalPrice(BigDecimal.ONE.multiply(BigDecimal.valueOf(quantity)));
+        //实际价格：dish的价格*order的数量
+        order.setTotalPrice(dish.getPrice().multiply(BigDecimal.valueOf(quantity)));
         //未支付状态
         order.setStatus(0);
         order.setCreateTime(LocalDateTime.now());
 
         ordersMapper.insert(order);
-
-        return toVO(order);
+        return toVO(order, dish);
     }
 
     /**
-     *获取订单详情(查询订单）
+     * 获取订单详情(查询订单）
      */
     @Override
     public OrderDetailVO getOrderDetail(Long id) {
         Orders order = ordersMapper.selectById(id);
-        if (order==null){
+        if (order == null) {
             throw new RuntimeException("订单不存在");
         }
-        return toVO(order);
+
+        //用id把dish传进来
+        Result<DishDTO> result = dishClient.getDishById(id);
+        if (result == null | result.getCode() != 200 || result.getData() == null) {
+            throw new RuntimeException("查询菜品信息失败");
+        }
+        DishDTO dish = result.getData();
+        return toVO(order, dish);
     }
 
 
