@@ -26,4 +26,15 @@ public class DishServiceImpl extends ServiceImpl<DishMapper,Dish> implements Dis
                 new LambdaQueryWrapper<Dish>().orderByAsc(Dish::getId)
         );
     }
+
+    @Override
+    public void deductStock(Long id, Integer quantity) {
+        //影响的行数
+        int rows = dishMapper.deductStock(id, quantity);
+        //rows<=0说明有异常
+        if (rows<=0){
+            //抛异常=告诉全局事务”这个分支失败了“，Seata会把订单和库存一起回滚
+            throw new RuntimeException("菜品库存不足");
+        }
+    }
 }

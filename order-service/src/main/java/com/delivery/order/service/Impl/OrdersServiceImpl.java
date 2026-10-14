@@ -9,6 +9,7 @@ import com.delivery.order.vo.OrderDetailVO;
 import com.delivery.order.entity.Orders;
 import com.delivery.order.mapper.OrdersMapper;
 import com.delivery.order.service.OrdersService;
+import org.apache.seata.spring.annotation.GlobalTransactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -65,6 +66,8 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
      * 创建订单
      */
     @Override
+    //一个分布式事务
+    @GlobalTransactional(timeoutMills = 300000, name = "create-order-tx")
     public OrderDetailVO createOrder(OrderCreateDTO dto) {
         if (dto == null || dto.getDishId() == null) {
             throw new RuntimeException("菜品id不能为空");
@@ -99,6 +102,14 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         order.setCreateTime(LocalDateTime.now());
 
         ordersMapper.insert(order);
+
+        //新增：远程和库存，事务的第二个分支
+        //库存不足时服务返回code=500，这里抛异常->全局回滚
+        Result<Void> deductResult = dishClient.deductStock(dto.getDishId(), quantity);
+        if (deductResult == null ||deductResult.getCode()!=200){
+            throw new RuntimeException(deductResult==null ? "扣减库存失败" : deductResult.getMessage());
+        }
+
         return toVO(order, dish);
     }
 

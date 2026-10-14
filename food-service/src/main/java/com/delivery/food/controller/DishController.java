@@ -51,4 +51,14 @@ public class DishController {
     public Result<Void> delete(@PathVariable Long id){
         return dishService.removeById(id) ? Result.success() : Result.fail("删除失败");
     }
+
+    /**
+     * 扣减库存（供订单服务内部调用）：库存不足抛异常->全局异常返回code=500
+     */
+    //语义上用PUT，但实际上POST更合适
+    @PostMapping("/deductStock")
+    public Result<Void> deductStock(@RequestParam("id") Long id,@RequestParam("quantity") Integer quantity){
+        dishService.deductStock(id,quantity);
+        return Result.success();
+    }
 }
