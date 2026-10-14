@@ -13,7 +13,7 @@ public class Dish {
     @TableId(type = IdType.AUTO)
     private Long id;
     private String name;
-    private Double price;
+    private BigDecimal price;
     //库存
     private Integer stock;
     //销量

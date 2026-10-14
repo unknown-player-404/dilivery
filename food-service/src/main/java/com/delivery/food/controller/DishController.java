@@ -5,6 +5,7 @@ import com.delivery.food.entity.Dish;
 import com.delivery.food.service.DishService;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -35,7 +36,7 @@ public class DishController {
         if (dish.getName() == null || dish.getName().isBlank()) {
             return Result.fail("菜品名称不能为空");
         }
-        if (dish.getPrice() == null || dish.getPrice() <= 0) {
+        if (dish.getPrice() == null || dish.getPrice().compareTo(BigDecimal.ZERO) <=0) {
             return Result.fail("菜品价格必须大于0");
         }
         return dishService.save(dish) ? Result.success() : Result.fail("新增失败");

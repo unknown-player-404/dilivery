@@ -8,6 +8,7 @@ import com.delivery.order.mapper.OrdersMapper;
 import com.delivery.order.service.OrdersService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -74,7 +75,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         //设置订单号（随机的）--自定义方法
         order.setOrderNo(generateOrderNo());
         //临时价格：等OpenFeign接入后换成真实价格
-        order.setTotalPrice(1.0 * quantity);
+        order.setTotalPrice(BigDecimal.ONE.multiply(BigDecimal.valueOf(quantity)));
         //未支付状态
         order.setStatus(0);
         order.setCreateTime(LocalDateTime.now());

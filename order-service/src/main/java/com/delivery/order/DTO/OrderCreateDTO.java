@@ -3,6 +3,8 @@ package com.delivery.order.DTO;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class OrderCreateDTO {
     /**

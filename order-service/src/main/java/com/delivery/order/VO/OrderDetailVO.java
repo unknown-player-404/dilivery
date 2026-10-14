@@ -2,6 +2,7 @@ package com.delivery.order.VO;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,10 +16,10 @@ public class OrderDetailVO {
     private String orderNo;
     private Long dishId;    //DTO参数
     private String dishName;
-    private Double dishPrice;
+    private BigDecimal dishPrice;
     //商品数量
     private Integer quantity;   //DTO参数
-    private Double totalPrice;
+    private BigDecimal totalPrice;
     //支付状态
     private Integer status;
     private LocalDateTime createTime;

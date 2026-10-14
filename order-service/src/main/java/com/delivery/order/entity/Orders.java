@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,7 +19,7 @@ public class Orders {
     //商品数量
     private Integer quantity;
     //总价
-    private Double totalPrice;
+    private BigDecimal totalPrice;
     //支付状态  0待支付  1已支付
     private Integer status;
     private LocalDateTime createTime;

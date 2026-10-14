@@ -5,7 +5,6 @@ import com.delivery.order.VO.OrderDetailVO;
 import com.delivery.order.common.Result;
 import com.delivery.order.entity.Orders;
 import com.delivery.order.service.OrdersService;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
