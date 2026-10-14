@@ -8,6 +8,13 @@ spring:
     url: jdbc:mysql://localhost:3306/takeout?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
+  application:
+    # 服务名：注册到Nacos的名字
+    name: food-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848    # 注册中心地址
 
 mybatis-plus:
   configuration:
