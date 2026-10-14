@@ -1,1 +1,8 @@
+com\delivery\food\mapper\DishMapper.class
 com\delivery\food\FoodServiceApplication.class
+com\delivery\food\service\DishService.class
+com\delivery\food\service\Impl\DishServiceImpl.class
+com\delivery\food\entity\Dish.class
+com\delivery\food\exception\GlobalExceptionHandler.class
+com\delivery\food\common\Result.class
+com\delivery\food\controller\DishController.class

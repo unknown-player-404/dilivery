@@ -1,0 +1,15 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # serverTimezone 一定要带，否则中国时区会差 8 小时；allowPublicKeyRetrieval 是 MySQL 8 认证需要
+    url: jdbc:mysql://localhost:3306/takeout?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+
+mybatis-plus:
+  configuration:
+    # 打印 SQL
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
