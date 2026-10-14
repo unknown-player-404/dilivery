@@ -67,6 +67,13 @@
             <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
         </dependency>
 
+        <!-- RocketMQ 客户端：订单服务当生产者，菜品服务当消费者 -->
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
+            <version>2.3.6</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>

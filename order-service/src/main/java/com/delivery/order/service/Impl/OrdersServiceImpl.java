@@ -9,8 +9,11 @@ import com.delivery.order.vo.OrderDetailVO;
 import com.delivery.order.entity.Orders;
 import com.delivery.order.mapper.OrdersMapper;
 import com.delivery.order.service.OrdersService;
+import lombok.RequiredArgsConstructor;
 import org.apache.seata.spring.annotation.GlobalTransactional;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,17 +21,15 @@ import java.util.Random;
 
 
 @Service
+@RequiredArgsConstructor
 public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> implements OrdersService {
     /**
      * 构造注入
      */
     private final OrdersMapper ordersMapper;
     private final DishClient dishClient;    //注入Feign接口，调用它=调用菜品服务
+    private final RocketMQTemplate rocketMQTemplate;
 
-    public OrdersServiceImpl(OrdersMapper ordersMapper, DishClient dishClient) {
-        this.ordersMapper = ordersMapper;
-        this.dishClient = dishClient;
-    }
 
     /**
      * 设置订单号的方法
@@ -43,21 +44,19 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
      * 将order和dish拼接并转化为成VO的方法
      */
     private OrderDetailVO toVO(Orders order, DishDTO dish) {
-        OrderDetailVO vo = new OrderDetailVO();
 
-        vo.setId(order.getId());
-        vo.setOrderNo(order.getOrderNo());
-        vo.setDishId(order.getDishId());
-
-        //接入OpenFeign后重做
-        //来自food-service的dishName和dishPrice
-        vo.setDishName(dish.getName());
-        vo.setDishPrice(dish.getPrice());
-
-        vo.setQuantity(order.getQuantity());
-        vo.setTotalPrice(order.getTotalPrice());
-        vo.setStatus(order.getStatus());
-        vo.setCreateTime(order.getCreateTime());
+        //Lombok的@Builder方法
+        OrderDetailVO vo = OrderDetailVO.builder()
+                .id(order.getId())
+                .orderNo(order.getOrderNo())
+                .dishId(order.getDishId())
+                .dishName(dish.getName())
+                .dishPrice(dish.getPrice())
+                .quantity(order.getQuantity())
+                .totalPrice(order.getTotalPrice())
+                .status(order.getStatus())
+                .createTime(order.getCreateTime())
+                .build();
 
         return vo;
     }
@@ -87,28 +86,27 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         //这个才是真正的dish
         DishDTO dish = result.getData();
 
-        Orders order = new Orders();
-        //下面两个参数都是dto本身包含的
-        order.setDishId(dto.getDishId());
-        order.setQuantity(quantity);
-
-        //下列参数都是现场设置
-        //设置订单号（随机的）--自定义方法
-        order.setOrderNo(generateOrderNo());
-        //实际价格：dish的价格*order的数量
-        order.setTotalPrice(dish.getPrice().multiply(BigDecimal.valueOf(quantity)));
-        //未支付状态
-        order.setStatus(0);
-        order.setCreateTime(LocalDateTime.now());
+        Orders order = Orders.builder()
+                .dishId(dto.getDishId())
+                .quantity(quantity)
+                .orderNo(generateOrderNo())
+                .totalPrice(dish.getPrice().multiply(BigDecimal.valueOf(quantity)))
+                .status(0)
+                .createTime(LocalDateTime.now())
+                .build();
 
         ordersMapper.insert(order);
 
         //新增：远程和库存，事务的第二个分支
         //库存不足时服务返回code=500，这里抛异常->全局回滚
         Result<Void> deductResult = dishClient.deductStock(dto.getDishId(), quantity);
-        if (deductResult == null ||deductResult.getCode()!=200){
-            throw new RuntimeException(deductResult==null ? "扣减库存失败" : deductResult.getMessage());
+        if (deductResult == null || deductResult.getCode() != 200) {
+            throw new RuntimeException(deductResult == null ? "扣减库存失败" : deductResult.getMessage());
         }
+
+        //发送RocketMQ消息，菜品服务消费后更新销量
+        String msg = "{\"dishId\":" + dto.getDishId() + ",\"quantity\":" + quantity + "}";
+        rocketMQTemplate.syncSend("order-created-topic", MessageBuilder.withPayload(msg).build());
 
         return toVO(order, dish);
     }

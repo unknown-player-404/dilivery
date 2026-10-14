@@ -14,4 +14,9 @@ public interface DishMapper extends BaseMapper<Dish> {
     @Update("UPDATE dish SET stock = stock- #{num} WHERE id = #{id} AND stock >= #{num}")
     int deductStock(@Param("id") Long id, @Param("num") Integer num);
 
+    /**
+     * 增加销量：(由RocketMQ消费者调用)
+     */
+    @Update("UPDATE dish SET sales = sales + #{num} WHERE id = #{id}")
+    int addSales(@Param("id") Long id,@Param("num") Integer num);
 }

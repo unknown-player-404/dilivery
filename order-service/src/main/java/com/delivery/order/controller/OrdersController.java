@@ -7,17 +7,17 @@ import com.delivery.order.vo.OrderDetailVO;
 import com.delivery.order.common.Result;
 import com.delivery.order.entity.Orders;
 import com.delivery.order.service.OrdersService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/order")
+@RequiredArgsConstructor
 public class OrdersController {
+
     private final OrdersService ordersService;
-    public OrdersController(OrdersService ordersService){
-        this.ordersService=ordersService;
-    }
 
     /**
      * 创建订单：挂上 @SentinelResource 后，

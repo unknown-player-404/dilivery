@@ -3,6 +3,7 @@ package com.delivery.food.controller;
 import com.delivery.food.common.Result;
 import com.delivery.food.entity.Dish;
 import com.delivery.food.service.DishService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -10,12 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/dish")
+@RequiredArgsConstructor
 public class DishController {
-    private final DishService dishService;
 
-    public DishController(DishService dishService) {
-        this.dishService = dishService;
-    }
+    private final DishService dishService;
 
     @GetMapping("/list")
     public Result<List<Dish>> list() {

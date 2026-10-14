@@ -3,6 +3,7 @@ package com.delivery.order.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("orders")
+@Builder
 public class Orders {
     @TableId(type = IdType.AUTO)
     private Long id;
