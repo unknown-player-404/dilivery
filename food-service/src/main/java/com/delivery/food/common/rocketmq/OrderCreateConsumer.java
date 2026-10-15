@@ -1,4 +1,4 @@
-package com.delivery.food.mq;
+package com.delivery.food.common.rocketmq;
 
 
 import com.delivery.food.service.DishService;
@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
+import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,9 +18,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-@RocketMQMessageListener(topic = "order-created-topic",consumerGroup = "food-server-sales-consumer")
+@RocketMQMessageListener(topic = "order-created-topic",consumerGroup = "food-service-sales-consumer")
 @RequiredArgsConstructor
-public class OrderCreateConsumer {
+public class OrderCreateConsumer implements RocketMQListener<String> {
     private static final ObjectMapper mapper=new ObjectMapper();
 
     private final DishService dishService;

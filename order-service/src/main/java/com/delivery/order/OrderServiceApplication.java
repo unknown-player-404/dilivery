@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@EnableFeignClients
-@EnableDiscoveryClient
+@EnableFeignClients         //OpenFeign
+@EnableDiscoveryClient      //Nacos
 @SpringBootApplication
 @MapperScan("com.delivery.order.mapper")
 public class OrderServiceApplication {

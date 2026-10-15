@@ -40,3 +40,8 @@ seata:
       default: 127.0.0.1:8091   # Seata服务端地址
     vgroup-mapping:
       delivery-tx-group: default  #映射到default集群
+
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: order-producer-group

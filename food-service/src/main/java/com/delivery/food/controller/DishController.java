@@ -1,6 +1,6 @@
 package com.delivery.food.controller;
 
-import com.delivery.food.common.Result;
+import com.delivery.food.common.result.Result;
 import com.delivery.food.entity.Dish;
 import com.delivery.food.service.DishService;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.delivery.order.service.Impl;
 
 import com.baomidou.mybatisplus.spring.service.impl.ServiceImpl;
 import com.delivery.order.client.DishClient;
-import com.delivery.order.common.Result;
+import com.delivery.order.common.result.Result;
 import com.delivery.order.dto.DishDTO;
 import com.delivery.order.dto.OrderCreateDTO;
 import com.delivery.order.vo.OrderDetailVO;

@@ -1,4 +1,4 @@
-package com.delivery.order.config;
+package com.delivery.order.common.config;
 
 
 import com.alibaba.csp.sentinel.annotation.aspectj.SentinelResourceAspect;

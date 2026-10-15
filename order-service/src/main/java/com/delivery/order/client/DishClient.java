@@ -1,7 +1,7 @@
 package com.delivery.order.client;
 
 
-import com.delivery.order.common.Result;
+import com.delivery.order.common.result.Result;
 import com.delivery.order.dto.DishDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -4,7 +4,7 @@ import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.delivery.order.dto.OrderCreateDTO;
 import com.delivery.order.vo.OrderDetailVO;
-import com.delivery.order.common.Result;
+import com.delivery.order.common.result.Result;
 import com.delivery.order.entity.Orders;
 import com.delivery.order.service.OrdersService;
 import lombok.RequiredArgsConstructor;
